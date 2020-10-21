@@ -9,9 +9,9 @@ public class Week_01.Hello1.Hello {
 
   public static void main(java.lang.String[]);
     Code:
-      stack=2, locals=6, args_size=1
-       0: iconst_4
-       1: istore_1
+      stack=2, locals=6, args_size=1        //函数栈深为2，局部变量6个槽位，参数列表大小为1
+       0: iconst_4                          //编译器优化直接计算了 1+3 的值作为常量
+       1: istore_1                          //赋值给变量
        2: bipush        10
        4: istore_2
        5: iconst_1
@@ -19,16 +19,16 @@ public class Week_01.Hello1.Hello {
        7: bipush        -4
        9: istore        4
       11: iload         4
-      13: ifge          20
-      16: bipush        7
+      13: ifge          20                   //if判断
+      16: bipush        7                    //结果为 true 执行赋值
       18: istore        4
-      20: iconst_0
-      21: istore        5
-      23: iload         5
-      25: bipush        100
-      27: if_icmpge     39
-      30: iinc          1, 10
-      33: iinc          5, 1
-      36: goto          23
+      20: iconst_0                           //常量 0 放入栈顶
+      21: istore        5                    //变量 i 赋值
+      23: iload         5                    //加载变量 i
+      25: bipush        100                  //常量 100 放入栈顶
+      27: if_icmpge     39                   //比较 i 与常量大小
+      30: iinc          1, 10                //a += 10
+      33: iinc          5, 1                 //i++
+      36: goto          23                   //回到 23，重新加载变量 i，继续循环
       39: return
 }
