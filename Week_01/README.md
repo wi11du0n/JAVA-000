@@ -95,4 +95,4 @@ G1 Old Generation:
 29517 interned Strings occupying 3017880 bytes.
 ```
 
-(G1GC)[./images/G1GC.png]
+!(G1GC)[./images/G1GC.png]
