@@ -17,8 +17,12 @@ javap -c ./Hello1/Hello.class #查看字节码
 
 参见 HelloClassLoader.java
 
+运行结果
+![](./images/HelloClassLoader.png)
+
 ### 第一课第三题
 
+![JMM](./images/JMM.png)
 
 ### 第一课第四题
 
@@ -27,6 +31,6 @@ javap -c ./Hello1/Hello.class #查看字节码
 1 /opt/application/app.jar -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -Xloggc:/opt/logs/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=100M -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/logs/apperror.hprof -Xmx2800M -Xms2800M -Xmn700M -XX:SurvivorRatio=6 -XX:+UseConcMarkSweepGC -Dspring.profiles.active=prd
 ```
 
-项目使用的是 CMS GC，新生代的比例是 1:1:6。
+项目使用的是 CMS GC，新生代的比例是 1:1:6。运维已经根据 app 运行的情况设置了新生代 700M，老年代 2100M。
 
 ### 第二课
