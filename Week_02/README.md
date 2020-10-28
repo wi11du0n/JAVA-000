@@ -299,4 +299,8 @@ Mac OS 上 JDK 8 的 G1 并不完善，但是在 JDK 11 下表现优异。G1 的
 
 ### 10/24 周六
 
+#### 1. 选做
+略
+
+#### 2. 写一段代码，使用 HttpClient 或 OkHttp 访问 http://localhost:8801 ，代码提交到 Github。
 见 [OkHttpTest.java](./src/main/java/org/example/OkHttpTest.java)
