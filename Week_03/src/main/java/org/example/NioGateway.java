@@ -21,6 +21,9 @@ public class NioGateway {
         String port = System.getProperty("proxyPort", "8888");
         int p = tryParsePort(port);
         HttpOutboundHandler.endpoints.add(proxyServer);
+        HttpOutboundHandler.endpoints.add(proxyServer);
+        HttpOutboundHandler.endpoints.add(proxyServer);
+
         HttpOutboundHandler.filters.add(new HttpLogResponseFilter());
         HttpInboundHandler.filters.add(new HttpLogRequestFilter());
 

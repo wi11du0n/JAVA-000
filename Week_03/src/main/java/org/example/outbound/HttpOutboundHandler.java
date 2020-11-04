@@ -47,6 +47,7 @@ public class HttpOutboundHandler {
         } catch (Exception e) {
             LOGGER.error("outbound handle response error.", e);
             nettyRes = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+            ctx.close();
         } finally {
             if (fullRequest != null) {
                 if (!HttpUtil.isKeepAlive(fullRequest)) {
@@ -88,7 +89,7 @@ public class HttpOutboundHandler {
             handleResponse(response, req, ctx);
         } catch (IOException e) {
             LOGGER.error("okhttp client proxy io error.", e);
-            return;
+            handleResponse(null, req, ctx);
         }
     }
 }
