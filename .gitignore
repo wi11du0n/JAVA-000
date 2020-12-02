@@ -79,3 +79,4 @@ gradlew
 gradlew.bat
 
 build/
+**/bin/**
