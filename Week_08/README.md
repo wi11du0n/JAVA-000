@@ -18,3 +18,27 @@ salt=?  WHERE id=?
 
 ## 周六
 ### 2.（必做）基于 hmily TCC 或 ShardingSphere 的 Atomikos XA 实现一个简单的分布式事务应用 demo（二选一），提交到 Github。
+
+gradle 引入 `implementation 'org.apache.shardingsphere:sharding-transaction-xa-core:4.1.1'`
+
+``` java
+@ShardingTransactionType(TransactionType.XA)
+@Transactional
+public void addTenUserWithError(List<User> list) {
+    for (int i = 0; i < 10; i++) {
+        User u = User.build();
+        userMapper.insert(u);
+        if (i == 9) {
+            throw new RuntimeException("test xa transaction.");
+        }
+        list.add(u);
+    }
+}
+```
+
+xa-xt1.log
+``` text
+{"id":"169.254.7.216.tm160750359997500001","wasCommitted":true,"participants":[{"uri":"169.254.7.216.tm1","state":"COMMITTING","expires":1607503900237,"resourceName":"resource-1-ds0"},{"uri":"169.254.7.216.tm2","state":"COMMITTING","expires":1607503900237,"resourceName":"resource-2-ds1"}]}
+{"id":"169.254.7.216.tm160750359997500001","wasCommitted":true,"participants":[{"uri":"169.254.7.216.tm1","state":"TERMINATED","expires":1607503900411,"resourceName":"resource-1-ds0"},{"uri":"169.254.7.216.tm2","state":"TERMINATED","expires":1607503900411,"resourceName":"resource-2-ds1"}]}
+{"id":"169.254.7.216.tm160750360041200002","wasCommitted":false,"participants":[{"uri":"169.254.7.216.tm3","state":"TERMINATED","expires":1607503900833,"resourceName":"resource-2-ds1"},{"uri":"169.254.7.216.tm4","state":"TERMINATED","expires":1607503900833,"resourceName":"resource-1-ds0"}]}
+```
