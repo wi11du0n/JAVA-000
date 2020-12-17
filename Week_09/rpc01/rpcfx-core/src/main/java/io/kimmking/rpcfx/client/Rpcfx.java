@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.ParserConfig;
 import io.kimmking.rpcfx.api.RpcfxRequest;
 import io.kimmking.rpcfx.api.RpcfxResponse;
+import io.kimmking.rpcfx.exception.RpcInvokeException;
+import io.kimmking.rpcfx.exception.RpcfxServerException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,7 +26,10 @@ public final class Rpcfx {
     public static <T> T create(final Class<T> serviceClass, final String url) {
 
         // 0. 替换动态代理 -> AOP
-        return (T) Proxy.newProxyInstance(Rpcfx.class.getClassLoader(), new Class[]{serviceClass}, new RpcfxInvocationHandler(serviceClass, url));
+        return (T) Proxy.newProxyInstance(
+                Rpcfx.class.getClassLoader(),
+                new Class[]{serviceClass},
+                new RpcfxInvocationHandler(serviceClass, url));
 
     }
 
@@ -34,6 +39,7 @@ public final class Rpcfx {
 
         private final Class<?> serviceClass;
         private final String url;
+
         public <T> RpcfxInvocationHandler(Class<T> serviceClass, String url) {
             this.serviceClass = serviceClass;
             this.url = url;
@@ -50,17 +56,26 @@ public final class Rpcfx {
             request.setMethod(method.getName());
             request.setParams(params);
 
-            RpcfxResponse response = post(request, url);
+            RpcfxResponse response;
+            try {
+                response = post(request, url);
+            } catch (Exception e) {
+                throw new RpcInvokeException("rpc invoke error.", e);
+            }
 
+            if (!response.isStatus()) {
+                throw new RpcfxServerException(response.getErrorMsg(), response.getException());
+            }
             // 这里判断response.status，处理异常
             // 考虑封装一个全局的RpcfxException
 
             return JSON.parse(response.getResult().toString());
+
         }
 
         private RpcfxResponse post(RpcfxRequest req, String url) throws IOException {
             String reqJson = JSON.toJSONString(req);
-            System.out.println("req json: "+reqJson);
+            System.out.println("req json: " + reqJson);
 
             // 1.可以复用client
             // 2.尝试使用httpclient或者netty client
@@ -70,7 +85,7 @@ public final class Rpcfx {
                     .post(RequestBody.create(JSONTYPE, reqJson))
                     .build();
             String respJson = client.newCall(request).execute().body().string();
-            System.out.println("resp json: "+respJson);
+//            System.out.println("resp json: " + respJson);
             return JSON.parseObject(respJson, RpcfxResponse.class);
         }
     }

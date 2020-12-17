@@ -8,6 +8,12 @@ public class RpcfxResponse {
 
     private Exception exception;
 
+    public String getErrorMsg() {
+        return exception == null
+                ? null
+                : exception.getMessage();
+    }
+
     public Object getResult() {
         return result;
     }
