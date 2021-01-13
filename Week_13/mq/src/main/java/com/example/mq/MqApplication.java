@@ -1,11 +1,19 @@
 package com.example.mq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import javax.jms.*;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Properties;
 
 @SpringBootApplication
 public class MqApplication {
@@ -16,7 +24,39 @@ public class MqApplication {
         listenTopic();
         sendMessage();
         readMessage();
+
+        kafkaProducer();
+        kafkaConsumer();
         System.exit(0);
+    }
+
+    private static void kafkaProducer() {
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", "localhost:9001,localhost:9002,localhost:9003");
+        properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+        ProducerRecord record;
+        for (int i = 0; i < 10000; i++) {
+            record = new ProducerRecord("test32", "message" + i);
+            producer.send(record);
+        }
+    }
+
+    private static void kafkaConsumer() {
+        Properties properties = new Properties();
+        properties.put("group.id", "gaol");
+        properties.put("bootstrap.servers", "localhost:9001,localhost:9002,localhost:9003");
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        KafkaConsumer consumer = new KafkaConsumer(properties);
+        consumer.subscribe(Collections.singletonList("test32"));
+        while (true) {
+            ConsumerRecords<String, String> poll = consumer.poll(Duration.ofMillis(500L));
+            for (ConsumerRecord<String, String> stringStringConsumerRecord : poll) {
+                System.out.println(stringStringConsumerRecord.value());
+            }
+        }
     }
 
     private static void listenTopic() throws JMSException {
