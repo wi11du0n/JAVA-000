@@ -80,3 +80,4 @@ gradlew.bat
 
 build/
 **/bin/**
+*.project

@@ -175,19 +175,126 @@ Decoder
 ## 并发编程
 
 ### Thread
+- 线程与操作系统线程对应
+- Object wait、notify 
+- Thread sleep、join、yield
+- 并发的原子性、可见性
+- 线程池
+    1. Excutor: 执行者 – 顶层接口
+    2. ExcutorService: 接口 API
+    3. ThreadFactory: 线程工厂
+    4. Excutors: 工具类
 
+### Java 并发包
 
-
-### 线程安全
-
-### 线程池
-
+- 锁机制类 Locks : Lock, Condition, ReadWriteLock
+- 原子操作类 Atomic : AtomicInteger
+- 线程池相关类 Executer : Future, Callable, Executor
+- 信号量三组工具类 Tools : CountDownLatch, CyclicBarrier, Semaphore
+- 并发集合类 Collections : CopyOnWriteArrayList, ConcurrentMap
+- 锁
+    1. 粒度
+    2. 性能
+    3. 重入
+    4. 公平
+    5. 自旋锁(spinlock)
+    6. 场景: 脱离业务场景谈性能都是耍流氓
 
 ## Spring 和 ORM
 
+1. Core:Bean/Context/AOP
+2. Testing:Mock/TestContext
+3. DataAccess:Tx/JDBC/ORM
+4. SpringMVC/WebFlux:web
+5. Integration:remoting/JMS/WS
+6. Languages:Kotlin/Groovy
+
+AOP-面向切面编程 Spring早期版本的核心功能，管理对象生命周期与对象装配。
+为了实现管理和装配，一个自然而然的想法就是，加一个中间层代理(字节码增强)来 实现所有对象的托管。
+
+IoC-控制反转
+也称为DI(Dependency Injection)依赖注入。
+对象装配思路的改进。
+从对象A直接引用和操作对象B，变成对象A里指需要依赖一个接口IB，系统启动和装配 阶段，把IB接口的实例对象注入到对象A，这样A就不需要依赖一个IB接口的具体实现， 也就是类B。
+
+#### Spring Boot 的出发点
+Spring 臃肿以后的必然选择。 一切都是为了简化。
+- 让开发变简单:
+- 让配置变简单:
+- 让运行变简单:
+
+#### Hibernate
+ORM(Object-Relational Mapping) 表示对象关 系映射。
+Hibernate 是一个开源的对象关系映射框架，它对 JDBC 进行了非常轻量级的对象封装，它将 POJO 与 数据库表建立映射关系，是一个全自动的 orm 框架 ，hibernate 可以自动生成 SQL 语句，自动执行， 使得 Java 程序员可以使用面向对象的思维来操纵数 据库。
+Hibernate 里需要定义实体类和 hbm 映射关系文件 (IDE 一般有工具生成)。
+
+
+#### MyBatis
+MyBatis 是一款优秀的持久层框架， 它支持定制化 SQL、存储过程以及高 级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结 果集。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接 口和 Java 的 POJOs(Plain Old Java Objects,普通的 Java 对象)映射成数 据库中的记录。
+
+#### JPA
+JPA 的全称是 Java Persistence API，
+即 Java 持久化 API，是一套基于 ORM 的规范，
+内部是由一系列的接口和抽象类构成。
+JPA 通过 JDK 5.0 注解描述对象-关系表映射关系 ，并将运行期的实体对象持久化到数据库中。
+核心 EntityManager
+
 ## MySQL
 
+### MySQL 存储 独占模式
+1. 日志组文件:ib_logfile0和ib_logfile1，默认均为5M 2)、表结构文件:*.frm
+3. 独占表空间文件:*.ibd
+4. 字符集和排序规则文件:db.opt
+5. binlog 二进制日志文件:记录主数据库服务器的 DDL 和 DML 操作 6)、二进制日志索引文件:master-bin.index
+共享模式 innodb_file_per_table=1
+6. 数据都在 ibdata1
+
+1)连接请求的变量
+1、max_connections
+2、back_log
+3、wait_timeout和interative_timeout
+
+2)缓冲区变量
+4、key_buffer_size 
+5、query_cache_size(查询缓存简称 QC) 
+6、max_connect_errors: 
+7、sort_buffer_size: 
+8、max_allowed_packet=32M 
+9、join_buffer_size=2M 
+10、thread_cache_size=300
+
+3)配置 Innodb 的几个变量 
+11、innodb_buffer_pool_size 
+12、innodb_flush_log_at_trx_commit 
+13、innodb_thread_concurrency=0 
+14、innodb_log_buffer_size 
+15、innodb_log_file_size=50M 
+16、innodb_log_files_in_group=3 
+17、read_buffer_size=1M 
+18、read_rnd_buffer_size=16M 
+19、bulk_insert_buffer_size=64M 
+20、binary log
+
+### 最佳实践
+- 如何恰当选择引擎?
+- 库表如何命名?
+- 如何合理拆分宽表?
+- 如何选择恰当数据类型:明确、尽量小
+- char、varchar 的选择
+- (text/blob/clob)的使用问题? - 文件、图片是否要存入到数据库? - 时间日期的存储问题?
+- 数值的精度问题?
+- 是否使用外键、触发器?
+- 唯一约束和索引的关系?
+- 是否可以冗余字段?
+- 是否使用游标、变量、视图、自定义函数、存储过程? - 自增主键的使用问题?
+- 能够在线修改表结构(DDL 操作)?
+- 逻辑删除还是物理删除?
+- 要不要加 create_time,update_time 时间戳?
+- 数据库碎片问题?
+- 如何快速导入导出、备份数据?
+
 ## 分库分表
+
 
 ## RPC 和微服务
 
