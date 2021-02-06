@@ -285,6 +285,9 @@ KK总结-最小使用锁：
 AOP-面向切面编程 Spring早期版本的核心功能，管理对象生命周期与对象装配。
 为了实现管理和装配，一个自然而然的想法就是，加一个中间层代理(字节码增强)来 实现所有对象的托管。
 
+AOP-面向切面编程 Spring早期版本的核心功能，管理对象生命周期与对象装配。
+为了实现管理和装配，一个自然而然的想法就是，加一个中间层代理(字节码增强)来 实现所有对象的托管。
+
 IoC-控制反转
 也称为DI(Dependency Injection)依赖注入。
 对象装配思路的改进。
@@ -435,6 +438,58 @@ Z 轴：通过拆分不同数据扩展，数据分片
 一个小节。
 强制按条件指定分库分表：比如配置好某些用户的数据进入单独的库表，其他数据默认处理。
 自定义方式分库分表：指定某些条件的数据进入到某些库或表。
+### MySQL 存储 独占模式
+1. 日志组文件:ib_logfile0和ib_logfile1，默认均为5M 2)、表结构文件:*.frm
+3. 独占表空间文件:*.ibd
+4. 字符集和排序规则文件:db.opt
+5. binlog 二进制日志文件:记录主数据库服务器的 DDL 和 DML 操作 6)、二进制日志索引文件:master-bin.index
+共享模式 innodb_file_per_table=1
+6. 数据都在 ibdata1
+
+1)连接请求的变量
+1、max_connections
+2、back_log
+3、wait_timeout和interative_timeout
+
+2)缓冲区变量
+4、key_buffer_size 
+5、query_cache_size(查询缓存简称 QC) 
+6、max_connect_errors: 
+7、sort_buffer_size: 
+8、max_allowed_packet=32M 
+9、join_buffer_size=2M 
+10、thread_cache_size=300
+
+3)配置 Innodb 的几个变量 
+11、innodb_buffer_pool_size 
+12、innodb_flush_log_at_trx_commit 
+13、innodb_thread_concurrency=0 
+14、innodb_log_buffer_size 
+15、innodb_log_file_size=50M 
+16、innodb_log_files_in_group=3 
+17、read_buffer_size=1M 
+18、read_rnd_buffer_size=16M 
+19、bulk_insert_buffer_size=64M 
+20、binary log
+
+### 最佳实践
+- 如何恰当选择引擎?
+- 库表如何命名?
+- 如何合理拆分宽表?
+- 如何选择恰当数据类型:明确、尽量小
+- char、varchar 的选择
+- (text/blob/clob)的使用问题? - 文件、图片是否要存入到数据库? - 时间日期的存储问题?
+- 数值的精度问题?
+- 是否使用外键、触发器?
+- 唯一约束和索引的关系?
+- 是否可以冗余字段?
+- 是否使用游标、变量、视图、自定义函数、存储过程? - 自增主键的使用问题?
+- 能够在线修改表结构(DDL 操作)?
+- 逻辑删除还是物理删除?
+- 要不要加 create_time,update_time 时间戳?
+- 数据库碎片问题?
+- 如何快速导入导出、备份数据?
+
 ### MySQL 存储 独占模式
 1. 日志组文件:ib_logfile0和ib_logfile1，默认均为5M 2)、表结构文件:*.frm
 3. 独占表空间文件:*.ibd
